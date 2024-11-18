@@ -195,7 +195,7 @@ def run():
     parser.add_argument("--second_stage_steps", type=int, default=10, help="Number of second stage training steps(unfreeze all params)")
 
     # distributed training parameters
-    parser.add_argument('--local_rank', default=-1, type=int,
+    parser.add_argument('--local_rank', '--local-rank', default=-1, type=int,
                         help='Local rank')
     parser.add_argument('--world-size', default=1, type=int,
                         help='number of distributed processes')
@@ -243,7 +243,16 @@ def run():
     if args.verbose:
         summary(model_module, input_size=(3, model_module.hyperparams['height'], model_module.hyperparams['height']))
 
-    mini_batch_size = model_module.hyperparams['batch'] // model_module.hyperparams['subdivisions']
+    if "BATCH_SIZE" in os.environ:
+        mini_batch_size = int(os.environ["BATCH_SIZE"])
+    else:
+        mini_batch_size = model_module.hyperparams['batch'] // model_module.hyperparams['subdivisions']
+
+    try:
+        from dltest import show_training_arguments
+        show_training_arguments([args, model_module.hyperparams])
+    except:
+        pass
 
     if dist.is_initialized():
         if dist.get_world_size() >= 8:

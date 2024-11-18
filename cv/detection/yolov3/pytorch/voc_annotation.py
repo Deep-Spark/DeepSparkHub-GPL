@@ -8,6 +8,7 @@ LastEditTime: 2021-05-10 19:38:34
 import os
 import argparse
 import xml.etree.ElementTree as ET
+import subprocess
 
 def convert_voc_annotation(data_path, data_type, anno_path, use_difficult_bbox=True):
 
@@ -18,8 +19,8 @@ def convert_voc_annotation(data_path, data_type, anno_path, use_difficult_bbox=T
     img_inds_file = os.path.join(data_path, 'ImageSets', 'Main', data_type + '.txt')
     # Rename the folder containing images
     try:
-        os.rename(os.path.join(data_path, 'JPEGImages'), os.path.join(data_path, 'images'))
-    except FileNotFoundError:
+        subprocess.run(f"cp -r {os.path.join(data_path, 'JPEGImages')} {os.path.join(data_path, 'images')}", shell=True)
+    except Exception:
         print("JPEGImages folder has already been renamed to images")
     with open(img_inds_file, 'r') as f:
         txt = f.readlines()

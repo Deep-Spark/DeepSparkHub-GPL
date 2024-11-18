@@ -8,11 +8,8 @@ fi
 DATE=`date +%Y%m%d%H%M%S`
 
 # Run finetuning
-python3 pytorchyolo/train.py "$@" 2>&1 | tee ${LOG_DIR}/training_${DATE}.log
+python3 pytorchyolo/finetune.py \
+    --pretrained_weights checkpoints/yolov3_voc_pretrain.pth \
+    --second_stage_steps 200  "$@"
 
-if [[ ${PIPESTATUS[0]} != 0 ]]; then
-  echo "ERROR: finetuning on VOC failed"
-  exit 1
-fi
-
-exit 0
+exit $?
