@@ -200,7 +200,7 @@ def run():
     parser.add_argument("--logdir", type=str, default="logs", help="Directory for training log files (e.g. for TensorBoard)")
     parser.add_argument("--seed", type=int, default=-1, help="Makes results reproducable. Set -1 to disable.")
 
-    parser.add_argument("--local_rank", type=int, default=-1, help="Local rank.")
+    parser.add_argument("--local_rank", "--local-rank", type=int, default=-1, help="Local rank.")
     parser.add_argument("--dist_backend", type=str, default="gloo", help="Distributed training backend.")
     args = parser.parse_args()
     rank = args.local_rank
@@ -213,7 +213,8 @@ def run():
             print("WARN: Use the distributed backend of the environment.")
             dist_backend = os.environ[DIST_BACKEND_ENV]
         dist.init_process_group(backend=dist_backend, rank=args.rank)
-        setup_for_distributed(args.rank == 0)
+
+    setup_for_distributed(args.rank == 0)
     torch.cuda.set_device(args.rank)
 
     print('CUDA_VISIBLE_DEVICES=', list(range(torch.cuda.device_count())))
@@ -250,6 +251,7 @@ def run():
     # #################
     # Create Dataloader
     # #################
+
     # Load training dataloader
     dataloader = _create_data_loader(
         train_path,
@@ -297,7 +299,7 @@ def run():
     for epoch in range(args.epochs):
 
         print("\n---- Training Model ----")
-        epoch_start_time = time.time()
+	epoch_start_time = time.time()
 
         model.train()  # Set model to training mode
 
