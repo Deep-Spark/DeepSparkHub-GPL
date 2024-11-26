@@ -1,7 +1,9 @@
-# Copyright (c) 2023, Shanghai Iluvatar CoreX Semiconductor Co., Ltd.
+# Copyright (c) 2023-2024, Shanghai Iluvatar CoreX Semiconductor Co., Ltd.
 # All Rights Reserved.
-
-# Loss functions
+# YOLOv5 🚀 by Ultralytics, GPL-3.0 license
+"""
+Loss functions
+"""
 
 import torch
 import torch.nn as nn
@@ -91,7 +93,6 @@ class QFocalLoss(nn.Module):
 class ComputeLoss:
     # Compute losses
     def __init__(self, model, autobalance=False):
-        super(ComputeLoss, self).__init__()
         self.sort_obj_iou = False
         device = next(model.parameters()).device  # get model device
         h = model.hyp  # hyperparameters
@@ -111,7 +112,7 @@ class ComputeLoss:
         det = model.module.model[-1] if is_parallel(model) else model.model[-1]  # Detect() module
         self.balance = {3: [4.0, 1.0, 0.4]}.get(det.nl, [4.0, 1.0, 0.25, 0.06, .02])  # P3-P7
         self.ssi = list(det.stride).index(16) if autobalance else 0  # stride 16 index
-        self.BCEcls, self.BCEobj, self.gr, self.hyp, self.autobalance = BCEcls, BCEobj, model.gr, h, autobalance
+        self.BCEcls, self.BCEobj, self.gr, self.hyp, self.autobalance = BCEcls, BCEobj, 1.0, h, autobalance
         for k in 'na', 'nc', 'nl', 'anchors':
             setattr(self, k, getattr(det, k))
 
@@ -165,8 +166,7 @@ class ComputeLoss:
         lcls *= self.hyp['cls']
         bs = tobj.shape[0]  # batch size
 
-        loss = lbox + lobj + lcls
-        return loss * bs, torch.cat((lbox, lobj, lcls, loss)).detach()
+        return (lbox + lobj + lcls) * bs, torch.cat((lbox, lobj, lcls)).detach()
 
     def build_targets(self, p, targets):
         # Build targets for compute_loss(), input targets(image,class,x,y,w,h)
@@ -218,7 +218,7 @@ class ComputeLoss:
             # Append
             a = t[:, 6].long()  # anchor indices
             # indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
-            indices.append((b,a,gj.clamp_(0,shape[2] - 1),gi.clamp_(0,shape[3] - 1)))  # image, anchor, grid indices
+            indices.append((b,a,gj.clamp_(0,shape[2] - 1),gi.clamp_(0,shape[3] - 1)))
             tbox.append(torch.cat((gxy - gij, gwh), 1))  # box
             anch.append(anchors[a])  # anchors
             tcls.append(c)  # class
