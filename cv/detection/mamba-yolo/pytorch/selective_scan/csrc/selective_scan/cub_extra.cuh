@@ -1,5 +1,7 @@
 // WarpMask is copied from /usr/local/cuda-12.1/include/cub/util_ptx.cuh
 // PowerOfTwo is copied from /usr/local/cuda-12.1/include/cub/util_type.cuh
+// Copyright (c) 2024, Shanghai Iluvatar CoreX Semiconductor Co., Ltd.
+// All Rights Reserved.
 
 #pragma once
 

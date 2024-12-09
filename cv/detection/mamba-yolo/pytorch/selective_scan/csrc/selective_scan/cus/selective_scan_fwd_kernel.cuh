@@ -1,5 +1,7 @@
 /******************************************************************************
  * Copyright (c) 2023, Tri Dao.
+ * Copyright (c) 2024, Shanghai Iluvatar CoreX Semiconductor Co., Ltd.
+ * All Rights Reserved.
  ******************************************************************************/
 
 #pragma once
