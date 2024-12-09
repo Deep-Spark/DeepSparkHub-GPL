@@ -5,6 +5,7 @@ DeepSparkHub模型仓库中的GPL类许可证模型
 
 ## 目录
 
+- Mamba-YOLO
 - YOLOv3
 - YOLOv5
 - YOLOv6
